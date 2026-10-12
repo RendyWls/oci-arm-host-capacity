@@ -14,6 +14,12 @@ jobs:
           php-version: '8.2'
       - name: Install Dependencies
         run: composer install --no-dev
+      - name: Create Private Key File
+        run: |
+          cat << 'EOF' > private_key.pem
+          ${{ secrets.OCI_KEY_FILE }}
+          EOF
+          chmod 600 private_key.pem
       - name: Run Auto Provision
         run: php index.php
         env:
@@ -21,7 +27,7 @@ jobs:
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
-          OCI_KEY_FILE: ${{ secrets.OCI_KEY_FILE }}
+          OCI_PRIVATE_KEY_FILENAME: private_key.pem
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
           OCI_OCPUS: ${{ secrets.OCI_OCPUS }}
